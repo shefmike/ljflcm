@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>����������Ϸ</title>
+    <title>垃圾分类游戏</title>
     <meta
-      name="viewport"
+      name="课题成果"
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,viewport-fit=cover"
     />
     <style>
@@ -133,17 +133,17 @@
   <body>
     <div id="app">
       <div id="message">
-        <div class="text">�����</div>
+        <div class="text">答错了</div>
       </div>
       <div id="body">
-        <h1>������������С����</h1>
-        <h5>�����ڼ�԰�����������׶�԰�����������ʵ���о���</h5>
+        <h1>生活垃圾分类小能手</h1>
+        <h5>《基于家园社区联动的幼儿园垃圾分类教育实践研究》</h5>
         <div id="debug"></div>
         <div class="action-bar">
-          <div id="score">�÷�: 0</div>
-          <div id="level">�ؿ�: 1</div>
+          <div id="score">得分: 0</div>
+          <div id="level">关卡: 1</div>
         </div>
-        <div id="timer">ʱ��: 60</div>
+        <div id="timer">时间: 60</div>
         <div id="gameArea"></div>
       </div>
       <audio
@@ -166,284 +166,284 @@
         const bins = [
           {
             id: "recyclable",
-            label: "�ɻ�����",
+            label: "可回收物",
             enLabel: "Recyclable",
             color: "blue",
-            icon: "./images/tong/�ɻ�����.png",
-            activeIcon: "./images/tong/�ɻ�����1.png",
+            icon: "./images/tong/可回收物.png",
+            activeIcon: "./images/tong/可回收物1.png",
           },
           {
             id: "hazardous",
-            label: "�к�����",
+            label: "有害垃圾",
             enLabel: "Hazardous Waste",
             // width: 150,
             color: "red",
-            icon: "./images/tong/�к�����.png",
-            activeIcon: "./images/tong/�к�����1.png",
+            icon: "./images/tong/有害垃圾.png",
+            activeIcon: "./images/tong/有害垃圾1.png",
           },
           {
             id: "kitchen",
-            label: "��������",
+            label: "厨余垃圾",
             enLabel: "Kitchen Waste",
             color: "green",
-            icon: "./images/tong/��������.png",
-            activeIcon: "./images/tong/��������1.png",
+            icon: "./images/tong/厨余垃圾.png",
+            activeIcon: "./images/tong/厨余垃圾1.png",
           },
           {
             id: "other",
-            label: "��������",
+            label: "其他垃圾",
             enLabel: "Other Waste",
             color: "gray",
-            icon: "./images/tong/��������.png",
-            activeIcon: "./images/tong/��������1.png",
+            icon: "./images/tong/其他垃圾.png",
+            activeIcon: "./images/tong/其他垃圾1.png",
           },
         ];
         const garbageImages = [
           // Recyclable (5 images)
           {
-            url: "./images/recyclable/ͼƬ1.png",
+            url: "./images/recyclable/图片1.png",
             category: "recyclable",
           }, // Plastic bottle 1
           {
-            url: "./images/recyclable/ͼƬ2.png",
+            url: "./images/recyclable/图片2.png",
             category: "recyclable",
           }, // Plastic bottle 2
           {
-            url: "./images/recyclable/ͼƬ4.png",
+            url: "./images/recyclable/图片4.png",
             category: "recyclable",
           }, // Cardboard
           {
-            url: "./images/recyclable/ͼƬ5.png",
+            url: "./images/recyclable/图片5.png",
             category: "recyclable",
           }, // Glass bottle
           {
-            url: "./images/recyclable/ͼƬ6.png",
+            url: "./images/recyclable/图片6.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ7.png",
+            url: "./images/recyclable/图片7.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ8.png",
+            url: "./images/recyclable/图片8.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ9.png",
+            url: "./images/recyclable/图片9.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ10.png",
+            url: "./images/recyclable/图片10.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ11.png",
+            url: "./images/recyclable/图片11.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ12.png",
+            url: "./images/recyclable/图片12.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ13.png",
+            url: "./images/recyclable/图片13.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ14.png",
+            url: "./images/recyclable/图片14.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ15.png",
+            url: "./images/recyclable/图片15.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ16.png",
+            url: "./images/recyclable/图片16.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ59.png",
+            url: "./images/recyclable/图片59.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ60.png",
+            url: "./images/recyclable/图片60.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ61.png",
+            url: "./images/recyclable/图片61.png",
             category: "recyclable",
           },
           {
-            url: "./images/recyclable/ͼƬ62.png",
+            url: "./images/recyclable/图片62.png",
             category: "recyclable",
           },
           // Aluminum can
           // Hazardous (5 images)
           {
-            url: "./images/youhai/ͼƬ17.png",
+            url: "./images/youhai/图片17.png",
             category: "hazardous",
           }, // Battery 1
           {
-            url: "./images/youhai/ͼƬ18.png",
+            url: "./images/youhai/图片18.png",
             category: "hazardous",
           }, // Battery 2
           {
-            url: "./images/youhai/ͼƬ19.png",
+            url: "./images/youhai/图片19.png",
             category: "hazardous",
           }, // Paint can
           {
-            url: "./images/youhai/ͼƬ20.png",
+            url: "./images/youhai/图片20.png",
             category: "hazardous",
           }, // Light bulb
           {
-            url: "./images/youhai/ͼƬ21.png",
+            url: "./images/youhai/图片21.png",
             category: "hazardous",
           },
           {
-            url: "./images/youhai/ͼƬ22.png",
+            url: "./images/youhai/图片22.png",
             category: "hazardous",
           },
           {
-            url: "./images/youhai/ͼƬ23.png",
+            url: "./images/youhai/图片23.png",
             category: "hazardous",
           },
           {
-            url: "./images/youhai/ͼƬ24.png",
+            url: "./images/youhai/图片24.png",
             category: "hazardous",
           },
           {
-            url: "./images/youhai/ͼƬ25.png",
+            url: "./images/youhai/图片25.png",
             category: "hazardous",
           },
           {
-            url: "./images/youhai/ͼƬ26.png",
+            url: "./images/youhai/图片26.png",
             category: "hazardous",
           },
           {
-            url: "./images/youhai/ͼƬ27.png",
+            url: "./images/youhai/图片27.png",
             category: "hazardous",
           },
           {
-            url: "./images/chuyu/ͼƬ28.png",
+            url: "./images/chuyu/图片28.png",
             category: "kitchen",
           }, // Food scraps 1
           {
-            url: "./images/chuyu/ͼƬ29.png",
+            url: "./images/chuyu/图片29.png",
             category: "kitchen",
           }, // Food scraps 2
           {
-            url: "./images/chuyu/ͼƬ30.png",
+            url: "./images/chuyu/图片30.png",
             category: "kitchen",
           }, // Vegetable peels
           {
-            url: "./images/chuyu/ͼƬ31.png",
+            url: "./images/chuyu/图片31.png",
             category: "kitchen",
           }, // Coffee grounds
           {
-            url: "./images/chuyu/ͼƬ32.png",
+            url: "./images/chuyu/图片32.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ33.png",
+            url: "./images/chuyu/图片33.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ34.png",
+            url: "./images/chuyu/图片34.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ35.png",
+            url: "./images/chuyu/图片35.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ36.png",
+            url: "./images/chuyu/图片36.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ37.png",
+            url: "./images/chuyu/图片37.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ38.png",
+            url: "./images/chuyu/图片38.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ39.png",
+            url: "./images/chuyu/图片39.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ40.png",
+            url: "./images/chuyu/图片40.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ41.png",
+            url: "./images/chuyu/图片41.png",
             category: "kitchen",
           },
           {
-            url: "./images/chuyu/ͼƬ42.png",
+            url: "./images/chuyu/图片42.png",
             category: "kitchen",
           },
           {
-            url: "./images/qita/ͼƬ43.png",
+            url: "./images/qita/图片43.png",
             category: "other",
           }, // Cigarette butt 1
           {
-            url: "./images/qita/ͼƬ44.png",
+            url: "./images/qita/图片44.png",
             category: "other",
           }, // Cigarette butt 2
           {
-            url: "./images/qita/ͼƬ45.png",
+            url: "./images/qita/图片45.png",
             category: "other",
           }, // Dirty tissue
           {
-            url: "./images/qita/ͼƬ46.png",
+            url: "./images/qita/图片46.png",
             category: "other",
           }, // Broken ceramic
           {
-            url: "./images/qita/ͼƬ47.png",
+            url: "./images/qita/图片47.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ48.png",
+            url: "./images/qita/图片48.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ49.png",
+            url: "./images/qita/图片49.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ50.png",
+            url: "./images/qita/图片50.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ51.png",
+            url: "./images/qita/图片51.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ52.png",
+            url: "./images/qita/图片52.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ53.png",
+            url: "./images/qita/图片53.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ54.png",
+            url: "./images/qita/图片54.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ55.png",
+            url: "./images/qita/图片55.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ56.png",
+            url: "./images/qita/图片56.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ57.png",
+            url: "./images/qita/图片57.png",
             category: "other",
           },
           {
-            url: "./images/qita/ͼƬ58.png",
+            url: "./images/qita/图片58.png",
             category: "other",
           }, // Used diaper
         ];
@@ -500,7 +500,7 @@
           renderBins(shuffledBins);
           loadGarbageImage();
           addDragEvents();
-          document.getElementById("level").innerHTML = `�ؿ�: ${level}`;
+          document.getElementById("level").innerHTML = `关卡: ${level}`;
         }
 
         function initLevel3() {
@@ -514,11 +514,11 @@
           const shuffledBins = bins.sort(() => Math.random() - 0.5);
           renderBins(shuffledBins);
           timer = 60;
-          timerEl.innerHTML = `ʱ��: ${timer}`;
+          timerEl.innerHTML = `时间: ${timer}`;
           loadGarbageImage();
           addDragEvents();
           startTimer();
-          document.getElementById("level").innerHTML = `�ؿ�: ${level}`;
+          document.getElementById("level").innerHTML = `关卡: ${level}`;
         }
 
         function loadGarbageImage() {
@@ -529,10 +529,10 @@
           if (available.length === 0) {
             if (level === 2) {
               level = 3;
-              document.getElementById("level").innerHTML = `�ؿ�: ${level}`;
+              document.getElementById("level").innerHTML = `关卡: ${level}`;
               initLevel3();
             } else {
-              alert("��Ϸ�������÷�: " + score);
+              alert("游戏结束！得分: " + score);
             }
             return;
           }
@@ -600,11 +600,11 @@
               renderMessage(1);
               playVoice();
               //   score += 10;
-              document.getElementById("score").innerHTML = `�÷�: ${score}`;
+              document.getElementById("score").innerHTML = `得分: ${score}`;
               colorMatches++;
               if (colorMatches === 4) {
                 level = 2;
-                document.getElementById("level").innerHTML = `�ؿ�: ${level}`;
+                document.getElementById("level").innerHTML = `关卡: ${level}`;
                 initLevel2();
               }
             } else {
@@ -620,7 +620,7 @@
               if (timer >= 0 || level === 2) {
                 score += 20;
               }
-              document.getElementById("score").innerHTML = `�÷�: ${score}`;
+              document.getElementById("score").innerHTML = `得分: ${score}`;
               garbageCount[category]++;
               loadGarbageImage();
             } else {
@@ -655,10 +655,10 @@
         function startTimer() {
           const interval = setInterval(() => {
             timer--;
-            document.getElementById("timer").innerHTML = `ʱ��: ${timer}`;
+            document.getElementById("timer").innerHTML = `时间: ${timer}`;
             if (timer <= 0) {
               clearInterval(interval);
-              alert("ʱ�䵽����Ϸ�������÷�: " + score);
+              alert("时间到，游戏结束！得分: " + score);
               gameStatus = false;
             }
           }, 1000);
