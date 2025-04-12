@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>À¬»ø·ÖÀàÓÎÏ·</title>
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,viewport-fit=cover"
+    />
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        text-decoration: none;
+        /* box-sizing: border-box; */
+      }
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+      #app {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        height: 100vh;
+        box-sizing: border-box;
+      }
+      #body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+      #gameArea {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        flex: 1;
+      }
+      #safe-area {
+        padding-bottom: constant(safe-area-inset-bottom);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      #garbageArea {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+      }
+      .bins {
+        display: flex;
+        justify-content: center;
+      }
+      .bin {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 140px;
+        min-height: 150px;
+        border: 2px solid #eee;
+        margin: 10px;
+        padding: 10px;
+      }
+      .bin img {
+        width: 130px;
+        /* margin-bottom: 6px; */
+      }
+      .colorBox {
+        width: 12vw;
+        height: 12vw;
+        margin: 10px;
+        display: inline-block;
+        cursor: move;
+      }
+      .garbageImg {
+        width: 18vw;
+        /* height: 18vw; */
+        cursor: move;
+      }
+      #timer {
+        display: none;
+        font-size: 24px;
+        padding: 8px 0;
+      }
+      #message {
+        position: fixed;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        pointer-events: none;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        padding-top: 15%;
+      }
+      #message .text {
+        display: none;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 6px 8px;
+        line-height: 1;
+        font-size: 16px;
+        transform: scale(1);
+      }
+      @keyframes slide {
+        from {
+          transform: scale(0) translateY(-20px);
+        }
+        to {
+          transform: scale(1) translateY(0);
+        }
+      }
+      #message .text.active {
+        display: block;
+        animation: slide 0.5s linear 1;
+      }
+      .action-bar {
+        display: flex;
+        justify-content: center;
+        padding: 8px 0 0;
+      }
+      .action-bar #score {
+        margin-right: 24px;
+      }
+      h5 {
+        color: #666;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="message">
+        <div class="text">´ð´íÁË</div>
+      </div>
+      <div id="body">
+        <h1>Éú»îÀ¬»ø·ÖÀàÐ¡ÄÜÊÖ</h1>
+        <h5>¡¶»ùÓÚ¼ÒÔ°ÉçÇøÁª¶¯µÄÓ×¶ùÔ°À¬»ø·ÖÀà½ÌÓýÊµ¼ùÑÐ¾¿¡·</h5>
+        <div id="debug"></div>
+        <div class="action-bar">
+          <div id="score">µÃ·Ö: 0</div>
+          <div id="level">¹Ø¿¨: 1</div>
+        </div>
+        <div id="timer">Ê±¼ä: 60</div>
+        <div id="gameArea"></div>
+      </div>
+      <audio
+        id="correctSound"
+        src="https://www.myinstants.com/media/sounds/success-1.mp3"
+      ></audio>
+      <audio
+        id="wrongSound"
+        src="https://www.myinstants.com/media/sounds/wrong-answer-sound-effect.mp3"
+      ></audio>
+
+      <div id="safe-area"></div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const isDebug = true;
+        const messageEl = document.querySelector("#message .text");
+        const timerEl = document.querySelector("#timer");
+        const bins = [
+          {
+            id: "recyclable",
+            label: "¿É»ØÊÕÎï",
+            enLabel: "Recyclable",
+            color: "blue",
+            icon: "./images/tong/¿É»ØÊÕÎï.png",
+            activeIcon: "./images/tong/¿É»ØÊÕÎï1.png",
+          },
+          {
+            id: "hazardous",
+            label: "ÓÐº¦À¬»ø",
+            enLabel: "Hazardous Waste",
+            // width: 150,
+            color: "red",
+            icon: "./images/tong/ÓÐº¦À¬»ø.png",
+            activeIcon: "./images/tong/ÓÐº¦À¬»ø1.png",
+          },
+          {
+            id: "kitchen",
+            label: "³øÓàÀ¬»ø",
+            enLabel: "Kitchen Waste",
+            color: "green",
+            icon: "./images/tong/³øÓàÀ¬»ø.png",
+            activeIcon: "./images/tong/³øÓàÀ¬»ø1.png",
+          },
+          {
+            id: "other",
+            label: "ÆäËûÀ¬»ø",
+            enLabel: "Other Waste",
+            color: "gray",
+            icon: "./images/tong/ÆäËûÀ¬»ø.png",
+            activeIcon: "./images/tong/ÆäËûÀ¬»ø1.png",
+          },
+        ];
+        const garbageImages = [
+          // Recyclable (5 images)
+          {
+            url: "./images/recyclable/Í¼Æ¬1.png",
+            category: "recyclable",
+          }, // Plastic bottle 1
+          {
+            url: "./images/recyclable/Í¼Æ¬2.png",
+            category: "recyclable",
+          }, // Plastic bottle 2
+          {
+            url: "./images/recyclable/Í¼Æ¬4.png",
+            category: "recyclable",
+          }, // Cardboard
+          {
+            url: "./images/recyclable/Í¼Æ¬5.png",
+            category: "recyclable",
+          }, // Glass bottle
+          {
+            url: "./images/recyclable/Í¼Æ¬6.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬7.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬8.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬9.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬10.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬11.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬12.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬13.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬14.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬15.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬16.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬59.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬60.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬61.png",
+            category: "recyclable",
+          },
+          {
+            url: "./images/recyclable/Í¼Æ¬62.png",
+            category: "recyclable",
+          },
+          // Aluminum can
+          // Hazardous (5 images)
+          {
+            url: "./images/youhai/Í¼Æ¬17.png",
+            category: "hazardous",
+          }, // Battery 1
+          {
+            url: "./images/youhai/Í¼Æ¬18.png",
+            category: "hazardous",
+          }, // Battery 2
+          {
+            url: "./images/youhai/Í¼Æ¬19.png",
+            category: "hazardous",
+          }, // Paint can
+          {
+            url: "./images/youhai/Í¼Æ¬20.png",
+            category: "hazardous",
+          }, // Light bulb
+          {
+            url: "./images/youhai/Í¼Æ¬21.png",
+            category: "hazardous",
+          },
+          {
+            url: "./images/youhai/Í¼Æ¬22.png",
+            category: "hazardous",
+          },
+          {
+            url: "./images/youhai/Í¼Æ¬23.png",
+            category: "hazardous",
+          },
+          {
+            url: "./images/youhai/Í¼Æ¬24.png",
+            category: "hazardous",
+          },
+          {
+            url: "./images/youhai/Í¼Æ¬25.png",
+            category: "hazardous",
+          },
+          {
+            url: "./images/youhai/Í¼Æ¬26.png",
+            category: "hazardous",
+          },
+          {
+            url: "./images/youhai/Í¼Æ¬27.png",
+            category: "hazardous",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬28.png",
+            category: "kitchen",
+          }, // Food scraps 1
+          {
+            url: "./images/chuyu/Í¼Æ¬29.png",
+            category: "kitchen",
+          }, // Food scraps 2
+          {
+            url: "./images/chuyu/Í¼Æ¬30.png",
+            category: "kitchen",
+          }, // Vegetable peels
+          {
+            url: "./images/chuyu/Í¼Æ¬31.png",
+            category: "kitchen",
+          }, // Coffee grounds
+          {
+            url: "./images/chuyu/Í¼Æ¬32.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬33.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬34.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬35.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬36.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬37.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬38.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬39.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬40.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬41.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/chuyu/Í¼Æ¬42.png",
+            category: "kitchen",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬43.png",
+            category: "other",
+          }, // Cigarette butt 1
+          {
+            url: "./images/qita/Í¼Æ¬44.png",
+            category: "other",
+          }, // Cigarette butt 2
+          {
+            url: "./images/qita/Í¼Æ¬45.png",
+            category: "other",
+          }, // Dirty tissue
+          {
+            url: "./images/qita/Í¼Æ¬46.png",
+            category: "other",
+          }, // Broken ceramic
+          {
+            url: "./images/qita/Í¼Æ¬47.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬48.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬49.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬50.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬51.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬52.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬53.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬54.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬55.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬56.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬57.png",
+            category: "other",
+          },
+          {
+            url: "./images/qita/Í¼Æ¬58.png",
+            category: "other",
+          }, // Used diaper
+        ];
+        let score = 0;
+        let level = 1;
+        let timer = 60;
+        let colorMatches = 0;
+        let garbageCount = {
+          recyclable: 0,
+          hazardous: 0,
+          kitchen: 0,
+          other: 0,
+        };
+        let totalGarbage = 5; // 5 items per category for both levels 2 and 3
+        let currentGarbage = null;
+        let gameStatus = false;
+        function renderBins(bins, colorBoxes) {
+          // ${bin.label}
+          const binsHtml = bins
+            .map(
+              (bin) =>
+                `<div class="bin" id="${bin.id}" data-color=""><img src="${
+                  level > 1 ? bin.activeIcon : bin.icon
+                }"></div>`
+            )
+            .join("");
+          let html = colorBoxes
+            ? `<div id="garbageArea">${colorBoxes}</div>`
+            : `<div id="garbageArea"></div>`;
+          html += `<div class="bins">${binsHtml}</div>`;
+          document.getElementById("gameArea").innerHTML = html;
+        }
+        function initLevel1() {
+          document.getElementById("gameArea").innerHTML = "";
+          //   const colors = ["red", "blue", "green", "gray"];
+          const shuffledColors = bins.sort(() => Math.random() - 0.5);
+          const colorBoxes = [...shuffledColors]
+            .sort(() => Math.random() - 0.5)
+            .map(
+              (bin, idx) =>
+                `<div class="colorBox" draggable="true" data-icon="${bin.activeIcon}" data-color="${bin.color}" style="background-color: ${bin.color}"></div>`
+            )
+            .join("");
+          renderBins(bins, colorBoxes);
+          addDragEvents();
+        }
+
+        function initLevel2() {
+          //   timerEl.style.display = "block";
+          totalGarbage = 5;
+          document.getElementById("gameArea").innerHTML = "";
+          timer.s;
+          const shuffledBins = bins.sort(() => Math.random() - 0.5);
+          renderBins(shuffledBins);
+          loadGarbageImage();
+          addDragEvents();
+          document.getElementById("level").innerHTML = `¹Ø¿¨: ${level}`;
+        }
+
+        function initLevel3() {
+          timerEl.style.display = "block";
+          totalGarbage = 6;
+          level = 3;
+          gameStatus = true;
+          document.getElementById("gameArea").innerHTML = "";
+          // Reset garbage count for level 3
+          garbageCount = { recyclable: 0, hazardous: 0, kitchen: 0, other: 0 };
+          const shuffledBins = bins.sort(() => Math.random() - 0.5);
+          renderBins(shuffledBins);
+          timer = 60;
+          timerEl.innerHTML = `Ê±¼ä: ${timer}`;
+          loadGarbageImage();
+          addDragEvents();
+          startTimer();
+          document.getElementById("level").innerHTML = `¹Ø¿¨: ${level}`;
+        }
+
+        function loadGarbageImage() {
+          let available = garbageImages.filter(
+            (img) => garbageCount[img.category] < totalGarbage
+          );
+          available = available.filter((i) => !i.active);
+          if (available.length === 0) {
+            if (level === 2) {
+              level = 3;
+              document.getElementById("level").innerHTML = `¹Ø¿¨: ${level}`;
+              initLevel3();
+            } else {
+              alert("ÓÎÏ·½áÊø£¡µÃ·Ö: " + score);
+            }
+            return;
+          }
+          currentGarbage =
+            available[Math.floor(Math.random() * available.length)];
+          currentGarbage.active = true;
+          // ${currentGarbage.category}
+
+          document.getElementById("garbageArea").innerHTML = `
+            <div>
+            <img class="garbageImg" draggable="true" data-category="${currentGarbage.category}" src="${currentGarbage.url}">
+            </div> 
+          `;
+          addDragEvents();
+        }
+
+        function addDragEvents() {
+          const draggables = document.querySelectorAll("[draggable=true]");
+          draggables.forEach((item) => {
+            item.addEventListener("dragstart", dragStart);
+            item.addEventListener("dragend", dragEnd);
+            // item.addEventListener("touchstart", dragStart);
+            // item.addEventListener("touchend", dragEnd);
+          });
+          const bins = document.querySelectorAll(".bin");
+          bins.forEach((bin) => {
+            bin.addEventListener("dragover", dragOver);
+            bin.addEventListener("drop", drop);
+            // bin.addEventListener("touchmove", dragOver);
+            // bin.addEventListener("touchend", drop);
+          });
+        }
+
+        let draggedItem = null;
+        function dragStart(e) {
+          draggedItem = e.target;
+        }
+
+        function dragEnd(e) {
+          draggedItem = null;
+        }
+
+        function dragOver(e) {
+          e.preventDefault();
+        }
+
+        function drop(e) {
+          e.preventDefault();
+          const bin = e.target.closest(".bin");
+          console.log("?eee");
+          if (!bin) return;
+          if (level == 3 && !timer) return;
+          if (level === 1) {
+            const color = draggedItem.dataset.color;
+            const icon = draggedItem.dataset.icon;
+            const correctColor = bins.find((b) => b.id === bin.id).color;
+            if (color === correctColor && !bin.dataset.color) {
+              //   bin.style.backgroundColor = color;
+              //   bin.style.color = "#fff";
+              //   bin.dataset.color = color;
+              bin.querySelector("img").setAttribute("src", icon);
+              if (bin.width) {
+                bin.querySelector("img").style.width = bin.width + "px";
+              }
+              renderMessage(1);
+              playVoice();
+              //   score += 10;
+              document.getElementById("score").innerHTML = `µÃ·Ö: ${score}`;
+              colorMatches++;
+              if (colorMatches === 4) {
+                level = 2;
+                document.getElementById("level").innerHTML = `¹Ø¿¨: ${level}`;
+                initLevel2();
+              }
+            } else {
+              playWrongVoice();
+              renderMessage(0);
+            }
+          } else {
+            const category = draggedItem.dataset.category;
+            const binId = bin.id;
+            if (category === binId) {
+              playVoice();
+              renderMessage(1);
+              if (timer >= 0 || level === 2) {
+                score += 20;
+              }
+              document.getElementById("score").innerHTML = `µÃ·Ö: ${score}`;
+              garbageCount[category]++;
+              loadGarbageImage();
+            } else {
+              playWrongVoice();
+              renderMessage(0);
+              loadGarbageImage();
+            }
+          }
+        }
+        let mTime;
+        function renderMessage(text, type) {
+          messageEl.classList.remove("active");
+          clearTimeout(mTime);
+          setTimeout(() => {
+            if (typeof text === "number") {
+              let url = `./images/${text ? "success" : "fail"}.gif`;
+              text = `<img src="${url}" class="gif" width="80"/>`;
+            }
+            messageEl.innerHTML = text;
+            messageEl.classList.add("active");
+            mTime = setTimeout(() => {
+              messageEl.classList.remove("active");
+            }, 2000);
+          });
+        }
+        function playVoice() {
+          document.getElementById("correctSound").play();
+        }
+        function playWrongVoice() {
+          document.getElementById("wrongSound").play();
+        }
+        function startTimer() {
+          const interval = setInterval(() => {
+            timer--;
+            document.getElementById("timer").innerHTML = `Ê±¼ä: ${timer}`;
+            if (timer <= 0) {
+              clearInterval(interval);
+              alert("Ê±¼äµ½£¬ÓÎÏ·½áÊø£¡µÃ·Ö: " + score);
+              gameStatus = false;
+            }
+          }, 1000);
+        }
+        timer = 10;
+        initLevel1();
+      });
+    </script>
+    <script src="https://drag-drop-touch-js.github.io/dragdroptouch/dist/drag-drop-touch.esm.min.js?autoload" type="module"></script>
+  </body>
+</html>
